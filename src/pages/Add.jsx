@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+
 const Add = () => {
+  const navigate= useNavigate()
   const [data,setData]=useState({
     id: '',
     name: '',
@@ -13,6 +16,7 @@ const handleAdd=async()=>{
   try {
     let response = await axios.post('http://localhost:5000/addemployees',data)
     console.log(response)
+    navigate('/')
   } catch (error) {
     console.log(error)
   }

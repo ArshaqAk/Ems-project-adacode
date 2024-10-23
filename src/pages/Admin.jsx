@@ -2,13 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
 import axios from 'axios'
 import {Link} from 'react-router-dom'
+import '../styles/admin.css'
+
 const Admin = () => {
 const [data,setData]=useState([])
+const [spin,setSpin]= useState(true)
 //getdata
   const fetchData=async()=>{
     try {
       let response = await axios.get('http://localhost:5000/getemployees')
        setData(response.data.employee)
+       setSpin(false)
     } catch (error) {
       console.log(error)
     }
@@ -17,7 +21,8 @@ const [data,setData]=useState([])
   //delete
   const handledelete =async(id)=>{
     try {
-      let response = await axios.delete('http://localhost:5000/deleteemployees',id)
+      let response = await axios.delete(`http://localhost:5000/deleteemployees/${id}`)
+      fetchData()
       console.log(response)
     } catch (error) {
       console.log(error)
@@ -26,8 +31,18 @@ const [data,setData]=useState([])
 
   useEffect(()=>{
     fetchData()
-  },[data])
+  },[])
+
+
   return (
+    spin?
+      <div className="spinner-container">
+      <div className="spinner-border" role="status">
+      <span className="visually-hidden">Loading...</span>
+      </div>
+      </div>
+    :
+
     <div className='container' style={{minHeight:'83vh'}}>
       <div className="row">
         <h2 className='text-center my-2'>Employee management system</h2>
@@ -62,10 +77,10 @@ const [data,setData]=useState([])
              <td>{item.designation}</td>
              <td>{item.salary}</td>
              <td>
-              <Link to={`/edit/${item.id}`}>
+              <Link to={`/edit/${item._id}`}>
               <button className='btn btn-outline-dark'><i className='fa-solid fa-pen'></i></button>
               </Link>
-               <button onClick={()=>handledelete(item.id)} className='btn btn-outline-dark ms-1'><i className='fa-solid fa-trash'></i></button>
+               <button onClick={()=>handledelete(item._id)} className='btn btn-outline-dark ms-1'><i className='fa-solid fa-trash'></i></button>
              </td>
            </tr>
            ))
